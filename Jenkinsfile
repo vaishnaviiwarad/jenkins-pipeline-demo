@@ -16,10 +16,19 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Deploying application...'
-                echo 'Application deployed successfully!'
+                echo 'Building Docker Image...'
+                bat 'docker build -t jenkins-demo-app:latest .'
+            }
+        }
+
+        stage('Deploy Docker Container') {
+            steps {
+                echo 'Deploying Docker Container...'
+                bat 'docker stop jenkins-demo-app || exit 0'
+                bat 'docker rm jenkins-demo-app || exit 0'
+                bat 'docker run -d --name jenkins-demo-app -p 3000:3000 jenkins-demo-app:latest'
             }
         }
     }
